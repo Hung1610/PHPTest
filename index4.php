@@ -39,48 +39,205 @@
                     // $book = new Book(1,50, "OOP in PHP", "ndungithue", 2019);
                     // $book->display();
                     // $ls = Book::getList();
-                    $ls = Book::getListFromFile();
-                    $filterBy = $_POST["search"];
-                    $filterFor = $_POST["searchCat"];
-                    if(isset( $filterBy ) && $filterBy != ""){
-                        $filteredArray = Book::filterList($ls, $filterBy,$filterFor);
+                    
+                    if(isset($_POST['deleteItem']) and is_numeric($_POST['deleteItem']))
+                    {
+                        Book::deleteFromFile($_POST['deleteItem']);
                     }
-                    else{
+                    if (isset($_REQUEST["addBook"])) {
+                        $id = $_REQUEST["id"];
+                        $title = $_REQUEST["Title"];
+                        $price = $_REQUEST["Price"];
+                        $author = $_REQUEST["Author"];
+                        $year = $_REQUEST["Year"];
+                        $content = $id . "#" . $title . "#" . $price . "#" . $author . "#" . $year;
+                        Book::addToFile($content);
+                        //echo "<meta http-equiv='refresh' content='0'>";
+                    }
+                    $ls = Book::getListFromFile();
+                    $filterBy = isset($_POST['search']) ? $_POST['search'] : '';
+                    $filterFor = isset($_POST['searchCat']) ? $_POST['searchCat'] : '';
+                    if (isset($filterBy) && $filterBy != "") {
+                        $filteredArray = Book::filterList($ls, $filterBy, $filterFor);
+                    } else {
                         $filteredArray = $ls;
                     }
                     // var_dump($ls);
                     ?>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="float-left">
+                                <!-- Topbar Search -->
+                                <form class="form-inline navbar-search" action="index4.php" method="post">
+                                    <div class="input-group mr-2">
+                                        <input name="search" type="text" class="form-control bg-light" placeholder="Search for book..." aria-label="Search" aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                    <!-- Topbar Search -->
-                    <form class="form-inline navbar-search" action="index4.php" method="post">
-                        <div class="input-group">
-                            <input name="search" type="text" class="form-control bg-light" placeholder="Search for book..." aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
+                                    <div class="form-check mr-2">
+                                        <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios1" value="1" <?php if (isset($filterFor) && $filterFor == "1") echo "checked"; elseif(!isset($filterFor)) echo "checked"; ?>>
+                                        <label class="form-check-label" for="searchCat">
+                                            Title
+                                        </label>
+                                    </div>
+                                    <div class="form-check mr-2">
+                                        <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios2" value="2" <?php if (isset($filterFor) && $filterFor == "2") echo "checked" ?>>
+                                        <label class="form-check-label" for="searchCat">
+                                            Author
+                                        </label>
+                                    </div>
+                                    <div class="form-check mr-2">
+                                        <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios3" value="3" <?php if (isset($filterFor) && $filterFor == "3") echo "checked" ?>>
+                                        <label class="form-check-label" for="searchCat">
+                                            Year
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="float-right pb-3">
+                                <button data-toggle="modal" data-target="#addBook" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp;Them</button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="editBook" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Them sach moi</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="addForm" method="POST">
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">ID</label>
+                                                        <div class="col-md-10">
+                                                            <input id="id" name="id" type="text" placeholder="ID" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">Title</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Title" name="Title" type="text" placeholder="Title" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">Price</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Title" name="Price" type="text" placeholder="Price" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <!-- Select Basic -->
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Year">Year</label>
+                                                        <div class="col-md-10">
+                                                            <select id="Year" name="Year" class="form-control">
+                                                                <option value="2019">2019</option>
+                                                                <option value="2018">2018</option>
+                                                                <option value="2017">2017</option>
+                                                                <option value="2016">2016</option>
+                                                                <option value="2015">2015</option>
+                                                                <option value="2014">2014</option>
+                                                                <option value="2013">2013</option>
+                                                                <option value="2012">2012</option>
+                                                                <option value="2011">2011</option>
+                                                                <option value="2010">2010</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Text input-->
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Author">Author</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Author" name="Author" type="text" placeholder="Author" class="form-control input-md">
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" name="editItem" class="btn btn-outline-success col-md-2" form="addForm" value="Submit">Submit</button>
+                                                <!-- <button type="submit" form="addForm" class="btn btn-outline-success col-md-2" data-dismiss="modal">Add</button> -->
+                                                <button class="btn btn-outline-primary col-md-2" type="button" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="addBook" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Them sach moi</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="addForm" method="POST">
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">ID</label>
+                                                        <div class="col-md-10">
+                                                            <input id="id" name="id" type="text" placeholder="ID" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">Title</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Title" name="Title" type="text" placeholder="Title" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Title">Price</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Title" name="Price" type="text" placeholder="Price" class="form-control input-md">
+                                                        </div>
+                                                    </div>
+                                                    <!-- Select Basic -->
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Year">Year</label>
+                                                        <div class="col-md-10">
+                                                            <select id="Year" name="Year" class="form-control">
+                                                                <option value="2019">2019</option>
+                                                                <option value="2018">2018</option>
+                                                                <option value="2017">2017</option>
+                                                                <option value="2016">2016</option>
+                                                                <option value="2015">2015</option>
+                                                                <option value="2014">2014</option>
+                                                                <option value="2013">2013</option>
+                                                                <option value="2012">2012</option>
+                                                                <option value="2011">2011</option>
+                                                                <option value="2010">2010</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Text input-->
+                                                    <div class="form-group d-flex">
+                                                        <label class="pt-1 col-md-2 control-label" for="Author">Author</label>
+                                                        <div class="col-md-10">
+                                                            <input id="Author" name="Author" type="text" placeholder="Author" class="form-control input-md">
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" name="addBook" class="btn btn-outline-success col-md-2" form="addForm" value="Submit">Submit</button>
+                                                <!-- <button type="submit" form="addForm" class="btn btn-outline-success col-md-2" data-dismiss="modal">Add</button> -->
+                                                <button class="btn btn-outline-primary col-md-2" type="button" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-check mr-2">
-                            <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios1" value="1" checked>
-                            <label class="form-check-label" for="searchCat">
-                                Title
-                            </label>
-                        </div>
-                        <div class="form-check mr-2">
-                            <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios2" value="2">
-                            <label class="form-check-label" for="searchCat">
-                                Author
-                            </label>
-                        </div>
-                        <div class="form-check mr-2">
-                            <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios3" value="3">
-                            <label class="form-check-label" for="searchCat">
-                                Year
-                            </label>
-                        </div>
-                    </form>
                     <table class="table table-hover table-bordered">
                         <thead class="thead-light">
                             <tr>
@@ -102,8 +259,8 @@
                                     <td><?php echo $book->price; ?></td>
                                     <td class="align-center">
                                         <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-outline-warning">Sửa</button>
-                                            <button type="button" class="btn btn-outline-info">Xóa</button>
+                                            <button type="button" class="btn btn-outline-warning" name="editItem" value="<?php echo $book->id; ?>" data-toggle="modal" data-target="#editBook">Sửa</button>
+                                            <button type="button" class="btn btn-outline-info" name="deleteItem" value="<?php echo $book->id; ?>" >Xóa</button>
                                         </div>
                                     </td>
                                 </tr>

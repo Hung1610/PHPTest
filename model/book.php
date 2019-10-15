@@ -73,4 +73,65 @@
                 });;
             }
         }
+
+        /**
+         * 
+         */
+        static function addToFile($content){
+            $myfile = fopen("data/book.txt", "a") or die("Unable to open file!");
+            fwrite($myfile, "\n". $content);
+            fclose($myfile);
+        }
+
+        /**
+         * 
+         */
+        static function deleteBook($bookId){
+            $str = null;
+            $listBook = Book::getListFromFile();
+            // var_dump($listBook)
+            foreach ($listBook as $value) {
+                # code..
+                if($bookId == $value->id){
+                    $str = $value->id . "#" . $value->title . "#" . $value->price  . "#" . $value->author . "#" . $value->year ;
+                    var_dump($str);
+                    break;
+                }
+            }
+            $contents = file_get_contents("data/book.txt");
+            $contents = str_replace($str, '', $contents);
+            $contents = preg_replace("/^\s+/m", '', $contents);
+            //$contents = str_replace("\n\n", "\n",$contents);
+            var_dump($contents);
+            file_put_contents("data/book.txt",$contents);
+        }
+
+        /**
+         * 
+         */
+        static function editBook($bookId, $newTitle, $newPrice, $newAuthor, $newYear){
+            $changedInfo = ["$newTitle", $newPrice, $newAuthor, $newYear];
+            $originInfo = null;
+            $str = null;
+            $listBook = Book::getListFromFile();
+            foreach ($listBook as $value) {
+                # code...
+                if($bookId == $value->id){
+                    $tempArr = [ $value->title, $value->price, $value->author, $value->year];
+                    $originInfo = $value->id . "#" . $value->title . "#" . $value->price  . "#" . $value->author . "#" . $value->year;
+                    for($i = 0; $i < 4; $i++) {
+                        # code...
+                        if($changedInfo[$i] == "")
+                            $changedInfo[$i] = $tempArr[$i];
+                    }
+                    break;                 
+                }
+            }
+
+            $str = $bookId . "#" . $changedInfo[0] . "#" . $changedInfo[1] . "#" . $changedInfo[2] . "#" . $changedInfo[3];
+            $contents = file_get_contents("data/book.txt");
+            $contents = str_replace($originInfo, $str, $contents);
+            file_put_contents("data/book.txt", $contents);
+        }
+
     }
