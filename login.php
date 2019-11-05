@@ -32,9 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
   <div class="signupSection">
     <div class="info">
-      <h2>Mission to Deep Space</h2>
+      <h2>Quản Lý Danh Bạ</h2>
       <i class="icon ion-ios-ionic-outline" aria-hidden="true"></i>
-      <p>The Future Is Here</p>
     </div>
     <form action="#" method="POST" class="signupForm" name="signupform">
       <h2>Sign In</h2>
@@ -53,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php } ?>
 
         <li id="center-btn">
-          <input type="submit" id="join-btn" name="join" alt="Join" value="Join">
+          <input type="submit" id="join-btn" name="join" alt="Log In" value="Log In">
         </li>
       </ul>
     </form>

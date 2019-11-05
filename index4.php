@@ -39,10 +39,9 @@
                     // $book = new Book(1,50, "OOP in PHP", "ndungithue", 2019);
                     // $book->display();
                     // $ls = Book::getList();
-                    
-                    if(isset($_POST['deleteItem']) and is_numeric($_POST['deleteItem']))
-                    {
-                        Book::deleteFromFile($_POST['deleteItem']);
+
+                    if (isset($_POST['deleteItem']) and is_numeric($_POST['deleteItem'])) {
+                        Book::deleteBook($_POST['deleteItem']);
                     }
                     if (isset($_REQUEST["addBook"])) {
                         $id = $_REQUEST["id"];
@@ -50,11 +49,11 @@
                         $price = $_REQUEST["Price"];
                         $author = $_REQUEST["Author"];
                         $year = $_REQUEST["Year"];
-                        $content = $id . "#" . $title . "#" . $price . "#" . $author . "#" . $year;
-                        Book::addToFile($content);
+                        Book::addBook($title,$price,$author,$year);
                         //echo "<meta http-equiv='refresh' content='0'>";
                     }
-                    $ls = Book::getListFromFile();
+                    // $ls = Book::getListFromFile();
+                    $ls = Book::getListFromDB();
                     $filterBy = isset($_POST['search']) ? $_POST['search'] : '';
                     $filterFor = isset($_POST['searchCat']) ? $_POST['searchCat'] : '';
                     if (isset($filterBy) && $filterBy != "") {
@@ -79,7 +78,8 @@
                                     </div>
 
                                     <div class="form-check mr-2">
-                                        <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios1" value="1" <?php if (isset($filterFor) && $filterFor == "1") echo "checked"; elseif(!isset($filterFor)) echo "checked"; ?>>
+                                        <input class="form-check-input" type="radio" name="searchCat" id="exampleRadios1" value="1" <?php if (isset($filterFor) && $filterFor == "1") echo "checked";
+                                                                                                                                    elseif (!isset($filterFor)) echo "checked"; ?>>
                                         <label class="form-check-label" for="searchCat">
                                             Title
                                         </label>
@@ -114,28 +114,22 @@
                                             <div class="modal-body">
                                                 <form id="addForm" method="POST">
                                                     <div class="form-group d-flex">
-                                                        <label class="pt-1 col-md-2 control-label" for="Title">ID</label>
-                                                        <div class="col-md-10">
-                                                            <input id="id" name="id" type="text" placeholder="ID" class="form-control input-md">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group d-flex">
                                                         <label class="pt-1 col-md-2 control-label" for="Title">Title</label>
                                                         <div class="col-md-10">
-                                                            <input id="Title" name="Title" type="text" placeholder="Title" class="form-control input-md">
+                                                            <input id="Title" name="title" type="text" placeholder="Title" class="form-control input-md">
                                                         </div>
                                                     </div>
                                                     <div class="form-group d-flex">
                                                         <label class="pt-1 col-md-2 control-label" for="Title">Price</label>
                                                         <div class="col-md-10">
-                                                            <input id="Title" name="Price" type="text" placeholder="Price" class="form-control input-md">
+                                                            <input id="Title" name="price" type="text" placeholder="Price" class="form-control input-md">
                                                         </div>
                                                     </div>
                                                     <!-- Select Basic -->
                                                     <div class="form-group d-flex">
-                                                        <label class="pt-1 col-md-2 control-label" for="Year">Year</label>
+                                                        <label class="pt-1 col-md-2 control-label" for="year">Year</label>
                                                         <div class="col-md-10">
-                                                            <select id="Year" name="Year" class="form-control">
+                                                            <select id="Year" name="year" class="form-control">
                                                                 <option value="2019">2019</option>
                                                                 <option value="2018">2018</option>
                                                                 <option value="2017">2017</option>
@@ -152,7 +146,7 @@
 
                                                     <!-- Text input-->
                                                     <div class="form-group d-flex">
-                                                        <label class="pt-1 col-md-2 control-label" for="Author">Author</label>
+                                                        <label class="pt-1 col-md-2 control-label" for="author">Author</label>
                                                         <div class="col-md-10">
                                                             <input id="Author" name="Author" type="text" placeholder="Author" class="form-control input-md">
 
@@ -258,10 +252,12 @@
                                     <td><?php echo $book->year; ?></td>
                                     <td><?php echo $book->price; ?></td>
                                     <td class="align-center">
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-outline-warning" name="editItem" value="<?php echo $book->id; ?>" data-toggle="modal" data-target="#editBook">Sửa</button>
-                                            <button type="button" class="btn btn-outline-info" name="deleteItem" value="<?php echo $book->id; ?>" >Xóa</button>
-                                        </div>
+                                        <form action="" method="post">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-outline-warning" name="editItem" value="<?php echo $book->id; ?>" data-toggle="modal" data-target="#editBook">Sửa</button>
+                                                <button type="submit" class="btn btn-outline-info" name="deleteItem" value="<?php echo $book->id; ?>">Xóa</button>
+                                            </div>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php } ?>

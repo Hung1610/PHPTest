@@ -21,7 +21,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Page Nav -->
-        <?php include_once("nav.php")?>
+        <?php include_once("nav.php") ?>
         <!-- End of Nav -->
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -29,74 +29,126 @@
             <!-- Main Content -->
             <div id="content">
                 <!-- Page Top Bar-->
-                <?php include_once("topbar.php")?>
+                <?php include_once("topbar.php") ?>
                 <!-- End of Top Bar -->
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    <?php
+                    include_once("model/contact.php");
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo $_SESSION["user"]?></h1>
+                    if (isset($_POST['deleteItem']) and is_numeric($_POST['deleteItem'])) {
+                        Contact::deleteContact($_POST['deleteItem']);
+                    }
+                    if (isset($_REQUEST["addContact"])) {
+                        $name = $_REQUEST["name"];
+                        $email = $_REQUEST["email"];
+                        $phone = $_REQUEST["phone"];
+                        $tag = $_REQUEST["tag"];
+                        Contact::addContact($name, $email, $phone, $tag);
+                        //echo "<meta http-equiv='refresh' content='0'>";
+                    }
+                    // $ls = Contact::getListFromFile();
+                    $ls = Contact::getListFromDB();
+                    $filterBy = isset($_POST['search']) ? $_POST['search'] : '';
+                    $filterFor = isset($_POST['searchCat']) ? $_POST['searchCat'] : '';
+                    if (isset($filterBy) && $filterBy != "") {
+                        $filteredArray = Contact::filterList($ls, $filterBy, "1");
+                    } else {
+                        $filteredArray = $ls;
+                    }
+
+                    ?>
+                    <div class="row">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($filteredArray as $key => $contact) { ?>
+                                    <tr>
+                                        <td>
+                                            <span><input type="checkbox"></span>
+                                            <?php echo $contact->name; ?>
+                                        </td>
+                                        <td><?php echo $contact->email; ?></td>
+                                        <td><?php echo $contact->phone; ?></td>
+                                        <!-- <td class="align-center">
+                                            <form action="" method="post">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-outline-warning" name="editItem" value="<?php echo $contact->id; ?>" data-toggle="modal" data-target="#editBook">Sửa</button>
+                                                    <button type="submit" class="btn btn-outline-info" name="deleteItem" value="<?php echo $contact->id; ?>">Xóa</button>
+                                                </div>
+                                            </form>
+                                        </td> -->
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Content Row -->
-                        <?php
-                        define('PI', '3.14');
-                        /**
-                         * Tinh dien tich hinh tron
-                         * @param $banKinh Ban kinh hinh tron
-                         * @return Dientichhinhtrong tich hinh tron co ban kinh la $banKinh
-                         */
-                        function dienTichHinhTron($banKinh)
-                        {
-                            $s = pi() * pow($banKinh, 2);
-                            return $s;
-                        }
-                        function sum($n)
-                        {
-                            $s = 0;
-                            for ($i = 0; $i < $n; $i++) {
-                                $s += $i;
-                            }
+                    <!-- Modal Contact -->
+                    <div class="modal fade" id="addContact" tabindex="-1" role="dialog" aria-labelledby="ContactAddModal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form>
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ContactAddModal">Thêm liên hệ mới</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="exampleInputEmail1">Tên</label>
+                                        <input type="text" name="name" class="form-control" placeholder="Nhập tên liên hệ">
+                                        <label for="exampleInputEmail1">Email</label>
+                                        <input type="text" name="email" class="form-control" placeholder="Nhập email">
+                                        <label for="exampleInputEmail1">Số điện thoại</label>
+                                        <input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại">
+                                        <label for="exampleInputEmail1">Tag</label>
+                                        <select name="tag" class="custom-select" id="inputGroupSelect01">
+                                            <option value="0" selected>Chọn tag</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                        <button type="submit" name="addContact" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 
-                            return $s;
-                        }
-                        function displayToday()
-                        {
-                            $dayOfWeek = [
-                                "Sun",
-                                "Mon",
-                                "Tue",
-                                "Wed",
-                                "Thu",
-                                "Fri",
-                                "sat",
-                            ];
-                            $day = date("w");
-                            return $dayOfWeek[$day];
-                            //var_dump($day);
-                        }
-                        echo "hello";
-                        $a = 5;
-                        $b = 6;
-                        $c = $a + $b;
-                        echo "<h3>ket qua cua phep tinh la " . $c . "</h3>";
-                        $c = "hello";
-                        echo "<br>";
-                        echo "$c";
-                        echo '$c';
-                        echo "<br>";
+                    </div>
 
-                        $r = 5;
-                        $s = dienTichHinhTron($r);
-                        echo "ket qua la $s";
-                        $n = 6;
-                        $tong = sum($n);
-                        echo "tong cua n so dau tien la $tong";
-                        echo "hom nay la" . displayToday();
-
-                        ?>
-
+                    <!-- Modal Tag -->
+                    <div class="modal fade" id="addTag" tabindex="-1" role="dialog" aria-labelledby="TagAddModal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form>
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="TagAddModal">Thêm tag mới</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="exampleInputEmail1">Tên</label>
+                                        <input type="text" name="name" class="form-control" placeholder="Nhập tên tag">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                        <button type="submit" name="addTag" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -111,7 +163,6 @@
                     </div>
                 </div>
             </footer> -->
-            <?php include_once("footer.php")?>
             <!-- End of Footer -->
 
         </div>
