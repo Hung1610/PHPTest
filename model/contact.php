@@ -82,9 +82,9 @@
             $con= Contact::connect();
             $sql = "UPDATE contact SET Email='$newEmail', Author='$newAuthor', Name='$newName', Tag='$newTag' WHERE Id=$contactId";
             if($con->query($sql)==true){
-                echo "Cập nhật thành công";
+                echo "<script>alert('Cập nhật thành công');</script>";
             }else {
-                echo "Cập nhật thất bại";
+                echo "<script>alert('Cập nhật thất bại');</script>";
             }
         }
     
@@ -92,9 +92,9 @@
             $con= Contact::connect();
             $sql = "INSERT INTO contact (Name, Email, Phone, Tag) VALUES ('$Name', '$Email', $Phone, $Tag);";   
             if($con->query($sql)==true){
-                echo "Thêm thành công";
+                echo "<script>alert('Thêm thành công');</script>";
             }else {
-                echo "Thêm thất bại";
+                echo "<script>alert('Thêm thất bại');</script>";
             }
         }
     
